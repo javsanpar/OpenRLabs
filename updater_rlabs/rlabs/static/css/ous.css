@@ -1,0 +1,122 @@
+body {
+	background-image : url("../images/logo_openRLabs.png");
+	background-repeat: no-repeat;
+	background-position-x: center;
+    background-position-y: 200px;
+    background-size: 400px;
+}
+
+#container {
+	display : flex;
+	flex-flow : row;
+} 
+
+#table_ous {	
+	flex-grow : 20;
+}
+
+#central_space {	
+	flex-grow : 80;
+}
+
+#table_active_reserves {	
+	flex-grow : 0;
+	display: inline-grid;
+	table-layout: fixed;
+	height: 0px;
+}
+
+#table_active_reserves thead {	
+    display: inline-table;
+}
+
+#table_active_reserves td {
+	display: table-cell;
+}
+
+#table_active_reserves tr {
+	display: table-row;
+}
+.image_user {
+	width: 40px;
+}
+.nopointer {
+	cursor : default;
+}
+
+.pointer:hover {
+	cursor : pointer;
+}
+
+.partitions_table {
+	display : none;	
+}
+
+td {
+	vertical-align:top;
+}
+.image {
+	background-color: #e4e4e4;
+
+	border-style: double;
+
+    display: table-row-group;
+    	
+	border-radius: 10px 10px 10px 10px;
+	
+} 
+
+.image td {
+	vertical-align: middle;
+}
+
+.image td span button {
+	font-weight: bold;
+}
+
+.nivel1 {
+	position : relative;
+
+}
+
+.nivel2 {
+	position : relative;
+}
+
+.nivel3 {
+	position : relative;
+	margin-left: 40px;
+}
+
+.status {
+	font-weight: bold;
+}
+
+#status_equipo {
+	width: 8px;
+}
+
+
+#progress_bar {
+  	width: 370px;
+  	height: 20px;		
+  	vertical-align: middle;
+}
+
+.modal-dialog {
+	max-width: 80%;
+	margin-left:20%;
+}
+.modal-content {
+	  	width: 80%;	
+}
+
+.modal-body {
+        height: 80%;
+}
+
+.disponible {
+	font-size: 0.8em;
+	vertical-align: text-bottom;
+	font-weight: bold;
+}

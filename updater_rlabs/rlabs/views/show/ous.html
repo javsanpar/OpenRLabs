@@ -1,0 +1,403 @@
+{{extend 'layout.html'}}
+<link href="{{=URL('static', 'css/ous.css')}}" rel="stylesheet"	type="text/css" />
+
+
+<script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+<!-- 
+<script src="{{=URL('static','js/rlabs/rlabs-utils.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-ajax.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-progress-bar.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-lab.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-os-images.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-disponibles-pc.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-pc.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-footer.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/rlabs/rlabs-modal.js')}}" type="text/javascript"></script>
+ -->
+<script src="{{=URL('static','js/rlabs-min.js')}}" type="text/javascript"></script>
+ 
+<script type="text/javascript">
+var labs_showed = 0;
+
+function get_Labs_ON(event) {
+	labs_showed = 0;
+
+	requestAJAX('{{=URL("show", "labs")}}',
+						'ou_id=' + event.target.getAttribute('data-ou'),
+						show_Labs);
+		
+}
+
+function cursor_wait(state){
+	document.getElementById('container').setAttribute("style","cursor:" + state + ";");
+	tables = document.getElementsByTagName("table");
+	for (i = 0; i < tables.length; i++) {
+		tables[i].setAttribute("style","cursor:" + state + ";");
+	}
+
+}
+
+
+function get_remotePCs(event) {	
+	if (labs_showed !== event.target.getAttribute('data-lab_id')) {
+		labs_showed = event.target.getAttribute('data-lab_id');
+		table_lab_id = event.target.getAttribute('data-lab_id');
+		table_lab = document.getElementById('lab_' + table_lab_id);
+		table_lab.setAttribute("style", "background : #bfbfbf;display:block;");
+		
+		cursor_wait('wait');
+		
+		requestAJAX('{{=URL("show", "clients")}}',
+					'ou_id=' + event.target.getAttribute('data-ou') +
+					'&lab_id=' + event.target.getAttribute('data-lab_id'),
+					show_PCs);	
+	}		
+}
+
+
+/* parametros = tomados desde modal seran añadios a la peticion de
+*  reserva en do_reserve.
+*/
+var parametros = null;
+
+function select_mode_connect(event){		
+	var button = event.target;
+	
+	parametros = 'ou_id=' + button.getAttribute('data-ou_id') +
+					 '&image_id=' + button.getAttribute('data-image_id') +
+					 '&lab_id=' + button.getAttribute('data-lab_id')					 
+		
+	$("#modalSelectMode").modal();			
+}
+
+
+function add_text_console(text) {
+	document.getElementById("text_consolelog").value = document.getElementById("text_consolelog").value +
+	text;	
+}
+
+/*
+ *  Do Unreserve
+ */
+
+ function unreserve(event){
+	var button = event.target;
+	
+	parametros = 'reserve_id=' + button.getAttribute('data-reserve_id') +
+					'&pc_id=' + button.getAttribute('data-pc_id') +
+					'&lab_id=' + button.getAttribute('data-lab_id') +
+					'&ou_id=' + button.getAttribute('data-ou_id');
+	
+	requestAJAX('{{=URL("show", "unreserve")}}', parametros, refresh_page);
+
+}
+ 
+function refresh_page(){
+	window.location.reload(true); 
+}
+
+ /*
+ * Get connection parameters from modal window  
+ */
+  
+var animator;
+
+function do_reserve(event){
+
+	var maxtime_string = document.getElementById("maxtime_input").value;
+	var maxtime = Number(maxtime_string);
+	
+	if ( maxtime > {{=maxtime_reserve}} ) {
+		alert("Tiempo máximo de reserva es (horas): " + {{=maxtime_reserve}})		
+	} else {
+		if ( Number.isInteger(maxtime) ) {
+			document.getElementById("maxtime_input").value = document.getElementById("maxtime_input").defaultValue;
+			
+			select_service = document.getElementById("service");
+			select_service_option = select_service.options[select_service.selectedIndex];
+			parametros = parametros + '&maxtime=' + maxtime + 
+									'&client_type=' + event.target.getAttribute('data-client') +
+									'&protocol=' + select_service_option.text +
+									'&port=' + select_service_option.value;			
+			
+			$("#modalSelectMode").modal("hide");
+			
+			requestAJAX('{{=URL("connect", "do_reserve")}}', parametros, check_status_client);
+			/* Show modal here to disable actions in main page*/
+			$("#modalConsoleLog").modal();
+			animator = show__progress_bar();		
+		} else {
+			alert("El número de horas debe ser un número entero.")
+		}
+	}
+	
+}
+
+/********
+ *  Call next stage of connection pc and show results in console.
+ *  When finished, call fucntion to either connect a PC or do port forwarding.
+ *****/
+function check_status_client(respuesta) {
+	add_text_console(respuesta.status);
+	
+	var parametros_status = '';	
+	for (param in respuesta.equipo_reservado) {
+		parametros_status = parametros_status + "&" + param + "=" + respuesta.equipo_reservado[param];
+	}
+	
+	if (respuesta.finalizado === undefined) {		
+
+		requestAJAX('{{=URL("connect", "check_pc_status")}}', parametros_status, check_status_client);
+	} else {
+		if (typeof(respuesta.error) === "undefined"){
+			document.getElementById("buttonConsole").style.display = 'block';
+			stop_progress_bar();			
+			if (respuesta.client_type === "browser") {
+				refresh_page();
+			} else {
+				/*
+				parametros = "&ip_remote=" + respuesta.ip +
+							 "&port_remote="+ document.getElementById("service").value +
+							 "&pc_name=" + respuesta.pc_name +
+							 "&maxtime= " + respuesta.maxtime;
+				*/
+				requestAJAX('{{=URL("connect", "openport")}}', parametros_status, add_message_port);			
+			}
+		} else {
+			alert(respuesta.error);
+		}	
+	}
+} 
+
+function add_message_port(respuesta) {	
+	add_text_console('\n Puerto a utilizar para la conexión: ' + respuesta.port);
+}
+
+/****
+ *  Set form with connection parameters and send it. 
+ */
+ 
+function show_remote_desktop(connect_data){	
+	if (typeof(connect_data.error) === "undefined"){
+		if (connect_data.client_type === "browser") {
+			document.getElementById("ip_remotePC").value=connect_data.ip;
+			document.getElementById("protocol_remotePC").value=connect_data.protocol;
+			document.getElementById("port_remotePC").value=connect_data.port;
+			document.getElementById("pc_id_remotePC").value=connect_data.pc_id;
+			document.getElementById("pc_name_remotePC").value=connect_data.pc_name;
+			document.getElementById("lab_id_remotePC").value=connect_data.lab_id;
+			document.getElementById("ou_id_remotePC").value=connect_data.ou_id;		
+			document.form.submit();
+		}
+	} else {
+		alert(connect_data.error);
+	}
+	
+}
+
+/*
+ * Connect reserved pc
+ */
+ function connect_remotePC(event){
+		var button = event.target;
+		
+		var connect_data = {client_type : "browser",
+							pc_name : button.getAttribute('data-pc_name'),
+							pc_id : button.getAttribute('data-pc_id'),
+							lab_id : button.getAttribute('data-lab_id'),
+							ou_id : button.getAttribute('data-ou_id'),
+							ip : button.getAttribute('data-ip'),
+							protocol : button.getAttribute('data-protocol'),
+							port : button.getAttribute('data-port')};
+
+		show_remote_desktop(connect_data);
+	}
+	
+ window.onload = function () {
+		var active_reserves = document.getElementsByClassName('active_reserve_status')
+		var loggedin = false;
+		for ( i=0; i < active_reserves.length; i++ ) {
+			if (active_reserves[i].getAttribute('data-loggedin') === "True") {
+				loggedin = true
+			} else {
+				loggedin = false
+			}
+			if (active_reserves[i].getAttribute('data-status') !== "undefined") {
+				var status_object = {'status' : active_reserves[i].getAttribute('data-status'),
+									 'loggedin': loggedin};
+				var img_status = getImg_pc(status_object)
+				active_reserves[i].setAttribute('src', '../static/images/' + img_status)
+			}
+		}
+}
+
+</script>
+
+<div id='container'>
+
+<table id="table_ous" class="nivel0">
+	<thead>
+		<tr>
+		    <th>Unidades Organizativas</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{if ous:}}
+		{{for ou in ous:}}
+		<tr class="pointer" id="ou_{{=ou['id']}}" style="display:block;">
+			<td width="16">
+			<img src="{{=URL('static','images/centros.gif')}}" data-ou={{=ou['id']}} onClick="get_Labs_ON(event)">
+			</td>			
+		    <td>
+			    <table id="table_ou_{{=ou['id']}}"> 
+			    	<tbody>
+			    		<tr>
+			    			<td>
+			    			<span data-ou={{=ou['id']}} onClick="get_Labs_ON(event)">{{=ou['name']}}</span>
+			    			</td>
+			    		</tr>
+			    	</tbody>
+			    </table>
+		    </td>		    
+		</tr>
+		{{pass}}
+	{{pass}}
+	</tbody>
+</table>
+<div id='central_space'></div>
+{{if exits_reserves:}}
+<table id='table_active_reserves'>
+	<thead>
+		<tr>
+			<th style="text-align: center;">Reservas Activas</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{for reserve in active_reserves:}}
+		<tr>
+			<td>	
+			<!--  If poolmanager cheking this host -->		
+			{{ if 'status' in reserve:}}
+            	<img class='status_equipo active_reserve_status' data-status="{{=reserve['status']}}"
+                                                data-loggedin="{{=reserve['loggedin']}}"
+                                                src='../static/images/odernador_WIN.png'>
+            {{else:}}
+
+                 <img class='status_equipo active_reserve_status' data-status="busy"
+                                                src='../static/images/odernador_WIN.png'>
+            {{pass}}
+
+			</td><td>
+			<span>{{=reserve['pc_name']}}</span>
+			</td><td>
+			<span><img class='image_user' src='../static/images/user.png'></span>
+			</td><td>		
+			<span>{{=reserve['user_id']}}</span>
+			</td><td>
+			<span><button type="button" class="btn btn-secondary"
+						  onclick="connect_remotePC(event)"
+						  data-reserve_id="{{=reserve['id']}}"
+						  data-pc_id="{{=reserve['pc_id']}}"
+						  data-lab_id="{{=reserve['lab_id']}}"
+						  data-ou_id="{{=reserve['ou_id']}}"
+						  data-pc_name="{{=reserve['pc_name']}}"
+						  data-port="{{=reserve['port']}}"
+						  data-protocol="{{=reserve['protocol']}}"
+						  data-ip="{{=reserve['ip']}}">Conectar</button>
+			</span>
+			<span><button type="button" class="btn btn-primary"
+						  onclick="unreserve(event)"
+						  data-reserve_id="{{=reserve['id']}}"
+						  data-pc_id="{{=reserve['pc_id']}}"
+						  data-lab_id="{{=reserve['lab_id']}}"
+						  data-ou_id="{{=reserve['ou_id']}}">Cancelar</button>
+			</span>
+			</td>
+		</tr>
+		{{pass}}
+	</tbody>
+</table>
+{{pass}}
+</div> <!--  End Container --> 
+ <!-- - Storage data remotePC to submit-->
+
+ <form name=form action={{=URL("connect", "desktop")}} target="_blank"  method="post">
+	<input id="ip_remotePC" type="hidden" name="ip" value="X">
+	<input id="protocol_remotePC" type="hidden" name="protocol" value="X">
+	<input id="port_remotePC" type="hidden" name="port" value="X">	
+	<input id="pc_id_remotePC" type="hidden" name="pc_id" value="X">
+	<input id="pc_name_remotePC" type="hidden" name="pc_name" value="X">
+	<input id="lab_id_remotePC" type="hidden" name="lab_id" value="X">
+	<input id="ou_id_remotePC" type="hidden" name="ou_id" value="X">
+</form>
+
+<!-- Console Modal -->
+<div class="modal fade" id="modalConsoleLog" tabindex="-1" role="dialog" data-backdrop="static"
+					aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="height: 100%;">
+    <div class="modal-content" style="height: 80%;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Proceso de Arranque</h5>
+        <!--
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+          <span aria-hidden="true">&times;</span>
+        </button>
+        -->
+      </div>
+      <div class="modal-body">
+		<div id="progress_bar_container">
+				<span>Arrancando equipo e iniciando sistema operativo...</span><br>
+				<progress id="progress_bar" max="100" value="0" data-time="{{=check_time}}"></progress>
+				<span id="progress_value" class="progress_value">0%</span>
+		</div>
+		<div id="consolelog" style="height: 100%;">
+			<textarea id="text_consolelog" class="form-control z-depth-1" readonly="True" 
+						style="background: black;color: grey;height: 90%;">
+			</textarea>
+		</div>   
+      </div>
+      <div class="modal-footer">
+        <button id="buttonConsole" type="button" onclick="refresh_page()" style="display: none;" 
+        		class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!--  <button type="button" class="btn btn-primary">Save changes</button>  -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Select Modal -->
+<div class="modal" id="modalSelectMode" tabindex="-1" role="dialog" data-backdrop="static"
+					data-keyboard="false" aria-labelledby="modalSelectMode" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="width: 50%;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalSelectMode">Parametros</h5>
+      </div>
+      <div class="modal-body">
+      	<div>		
+			<span>Tiempo máximo de reserva (horas):</span>
+			<input id="maxtime_input" value="{{=maxtime_reserve}}">
+		</div>
+		<div>
+			<span>Aplicación:</span>
+			{{if services:}}
+			<select id="service">				
+					{{for service in services:}}
+  					<option value="{{=service['port']}}">{{=service['name']}}</option>
+  					{{pass}}  							
+			</select>
+			{{pass}}			
+		</div>
+      </div>      
+      <div class="modal-footer">
+      	<span>Conectar mediante: </span>
+		<button type="button" onclick="do_reserve(event)" class="btn btn-primary" data-client="browser">Navegador (solo RDP)</button>
+		<!--      
+		<button type="button" onclick="connect_remotePC(event)" class="btn btn-primary" data-client="browser">Navegador (solo RDP)</button>		
+        <button type="button" onclick="connect_remotePC(event)" class="btn btn-secondary" data-dismiss="modal" data-client="desktop">Aplicación de Escritorio</button>
+        --> 
+        <button type="button" onclick="reset_modal()" class="btn btn-secondary" data-dismiss="modal" data-client="desktop">Cancel</button>        
+      </div>
+    </div>
+  </div>
+</div>

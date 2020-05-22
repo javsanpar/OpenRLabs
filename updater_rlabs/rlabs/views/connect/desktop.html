@@ -1,0 +1,131 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<body>
+
+	<title>{{=pc_name}}</title>
+
+	<link href="{{=URL('static', 'css/desktop.css')}}" rel="stylesheet"	type="text/css" />
+	<!--  <script src="{{=URL('static','js/guacamole-common-js/all.min.js')}}" type="text/javascript"></script>  -->
+	<script src="{{=URL('static','js/guacamole-common-js/all.js')}}" type="text/javascript"></script>
+		
+	<!--
+ 	<script type="text/javascript" src="{{=URL('static','js/guacamole-common-js/gitguac.js')}}"></script>
+    <script type="text/javascript" src="{{=URL('static','js/guacamole-common-js/keysyms.js')}}"></script>		
+	-->
+	
+	
+	<!-- Display -->
+	<div id="container"></div>
+	
+	
+	<script type="text/javascript"> /* <![CDATA[ */
+	// Start connect after control returns from onload (allow browser
+	// to consider the page loaded).
+	window.onload = function() {		
+		console.log('Window upload');
+		console.log("{{=pc_name}}");
+		if ( "{{=pc_name}}" === undefined ) {
+			alert('Error de conexión. \
+				Vuelva a intentarlo o pongase en contacto  con el personal de mantenimiento.')
+		}
+		
+	    window.setTimeout(function() {
+	    	
+	
+			// Get display div from document
+			var container = document.getElementById("container");
+				
+			// Instantiate client, using an HTTP tunnel for communications.
+			var guac = new Guacamole.Client(				
+				new Guacamole.WebSocketTunnel("{{=url_webSocket}}")
+		            );
+		    	
+		    	
+		   	// Returns the element which contains the Guacamole display
+		    var guac_display =  guac.getDisplay().getElement();
+	
+			// Add client to container div	
+			container.appendChild(guac.getDisplay().getElement());		   	
+		   	
+	        try {
+	
+	            // Calculate optimal width/height for display
+	            var optimal_width = window.innerWidth;
+	            var optimal_height = window.innerHeight;
+	
+	            // Scale width/height to be at least 600x600
+	            if (optimal_width < 600 || optimal_height < 600) {
+	                var scale = Math.max(600 / optimal_width, 600 / optimal_height);
+	                optimal_width = Math.floor(optimal_width * scale);
+	                optimal_height = Math.floor(optimal_height * scale);
+	            }
+	
+	            // Get entire query string, and pass to connect().
+	            // Normally, only the "id" parameter is required, but
+	            // all parameters should be preserved and passed on for
+	            // the sake of authentication.
+	
+	            var connect_string =
+	                window.location.search.substring(1)
+	                + "&width="  + optimal_width
+	                + "&height=" + optimal_height;	   	
+		    	
+	        	// Connect
+	        	
+	        	connect_string += "&protocol={{=protocol}}&ip={{=ip}}&port={{=port}}&username={{=username}}";
+	        		        	
+
+	            guac.connect(connect_string);
+	            
+	        }
+	        catch (e) {
+	            alert(e.message);
+	        } 
+	        
+	    	// Mouse
+	    	var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
+
+	    	mouse.onmousedown = 
+	    	mouse.onmouseup   =	
+	    	mouse.onmousemove = function(mouseState) {
+	    		guac.sendMouseState(mouseState);
+	    	};
+
+	    	// Keyboard
+	    	var keyboard = new Guacamole.Keyboard(document);
+
+	    	keyboard.onkeydown = function (keysym) {	    		
+	    		guac.sendKeyEvent(1, keysym);
+	    		
+	    	};
+
+	    	keyboard.onkeyup = function (keysym) {
+	    		guac.sendKeyEvent(0, keysym);
+	    			    		
+	    	};
+
+	    		        
+	    }, 500);
+	}; //End onload
+	
+
+	window.onunload = function() { 		
+		//guac.disconnect();
+		
+		/*
+		* No implemento porque al recargar la página también se ejecuta y no me interesa.
+		* Puedo refrescar para que me reescale la página o por cualquier otro motivo.
+		*/
+		
+			
+		xhr = new XMLHttpRequest();
+    	xhr.open("POST", '{{=URL("events", "getEventsWindowUnload")}}', false);    	
+    	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send("pc_id={{=pc_id}}&lab_id={{=lab_id}}&ou_id={{=ou_id}}");        
+		
+	}
+	
+	
+	/* ]]> */ </script>
+
+</body>	    	

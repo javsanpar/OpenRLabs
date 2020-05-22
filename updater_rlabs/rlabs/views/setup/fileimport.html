@@ -1,0 +1,25 @@
+{{extend 'layout.html'}}
+<link href="{{=URL('static', 'css/setup.css')}}" rel="stylesheet"	type="text/css" />
+
+<div class="container_setup">
+	<div class="menu_config">
+	 {{include 'setup/menu.html'}} 
+	</div>
+	
+	<div class="form_config">            
+		<form action="#" class="web2py_form" enctype="multipart/form-data" 
+				id="form_import" method="post">
+			<label id="label_input">
+				<span>Formato lineas archivo CSV:</span>
+				<span id="console_csv">					
+					<span class="lines_csv">nombre1,apellido1,email1@servidor_correo.es</span>
+					<span class="lines_csv">nombre2,apellido2,email2@servidor_correo.es</span>
+					<span class="lines_csv">.....</span>
+				</span>
+			</label>
+			<input accept=".csv" name="fichero" type="file">
+			<input class="btn btn-default btn-secondary" type="submit" value="Enviar">
+		</form>
+	</div>
+</div>
+

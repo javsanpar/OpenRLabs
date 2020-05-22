@@ -1,0 +1,67 @@
+OpenRLabs v1.1.1 - 30 Marzo 2020 - Copyright 2020 David Fuertes.
+
+
+INTRODUCCIÓN
+
+
+Aplicación Open Source, que utiliza la funcionalidad ofrecida 
+por opengnsys a traves de su API REST para el acceso a escritorio 
+remoto mediante un navegador web.
+
+PRE-REQUISITOS
+
+Tener instalada una versión previa de OpenRLabs.
+
+El actualizador ha sido testado en Ubuntu Server 18.04
+
+ACTUALIZACION
+
+Este paquete contiene solamente las fuentes de la aplicación.
+NO CONTIENE ninguna base de datos, por lo que los datos de la 
+aplicación ya instalada no se modifican.
+
+Se creara una copia de seguridad web2py.old.tar.gz en el directorio
+actual de la aplicación.
+
+Para actualizar:
+
+chmod +x updater.sh
+sudo foo updater.sh
+
+
+WIKI
+
+Toda la documentación es encuentra en:
+
+wiki.openrlabs.es
+
+
+CONTACTO
+
+<dfuertes@unizar.es>
+<jcgarcia@unizar.es>
+
+DETALLES DE LA LICENCIA
+
+
+openrlabs is released under the GNU General Public License,
+version 3 or later. See file "COPYING" for full license text.
+
+In compliance with the terms of the GPL, a full source distribution 
+(openrlabs and all included libraries) is available at 
+<http://openrlabs.es>.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
