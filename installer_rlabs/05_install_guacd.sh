@@ -7,5 +7,5 @@ echo "|         Installing GUACD                 |"
 echo "|                                          |"
 echo "+------------------------------------------+"
 
-$pkg_mng --yes install guacd
 
+$pkg_mng --yes install guacd

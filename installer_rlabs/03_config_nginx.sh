@@ -47,6 +47,7 @@ sed -i "s/\$SERVER_RLABS/$server_rlabs/g;
 
 cp packages/nginx_config/sites-available/web2py /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/web2py  /etc/nginx/sites-enabled/web2py
+ln -s /etc/nginx/sites-available/default  /etc/nginx/sites-enabled/default
 
 rm -fr packages/nginx_config
 

@@ -12,8 +12,11 @@ case $OS in
   Ubuntu | Debian)
 	pkg_mng=apt
 	;;
-  RedHat | Fedora)
+  RedHat | RHEL| CentOS)
 	pkg_mng=yum 
+	;;
+  Fedora)
+	pkg_mng=dnf
 	;;
 esac
 

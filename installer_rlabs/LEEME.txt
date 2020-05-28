@@ -1,0 +1,87 @@
+OpenRLabs v1.1.1 - 30 Marzo 2020 - Copyright 2020 David Fuertes.
+
+
+INTRODUCCIÓN
+
+
+Aplicación Open Source, que utiliza la funcionalidad ofrecida 
+por opengnsys a traves de su API REST para el acceso a escritorio 
+remoto mediante un navegador web.
+
+PRE-REQUISITOS
+
+Para hacer funcionar la aplicación ser necesita un sistema LINUX con:
+
+ - Framework web2py.
+ - Servidor web.
+ - Servidor aplicaciones Java.
+
+Durante el proceso se instala todo lo necesario para 
+poder ejecutar la aplicación.
+
+El instalador ha sido testado en Ubuntu Server 18.04
+
+INSTALACIÓN
+
+El proceso de instalación requiere de diferentes 
+componentes. La instalación de cada componente se ha 
+implementado en ficheros diferentes numerado para 
+cumplir con el orden de instalación requerido.
+
+Desde el fichero install.sh se ejecutan todos los scripts.
+Para instalar el programa.
+Ejemplo con el usuario "foo" (necesitará privilegios 
+de administración):
+
+chmod +x install.sh
+sudo foo install.sh
+
+PROBLEMAS DETECTADOS Y LIMITACIONES
+
+La aplicación funciona correctamente con
+el navegador Google Chrome.
+
+Puede funcionar también en Mozilla Firefox,
+pero se recomienda leer en el WIKI -> FAQs las
+medidas a tener en cuenta.
+
+En otros navegadores no ha sido testado.
+
+
+WIKI
+
+Toda la documentación es encuentra en:
+
+wiki.openrlabs.es
+
+
+CONTACTO
+
+<dfuertes@unizar.es>
+<jcgarcia@unizar.es>
+
+
+DETALLES DE LA LICENCIA
+
+
+openrlabs is released under the GNU General Public License,
+version 3 or later. See file "COPYING" for full license text.
+
+In compliance with the terms of the GPL, a full source distribution 
+(openrlabs and all included libraries) is available at 
+<http://openrlabs.es>.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
