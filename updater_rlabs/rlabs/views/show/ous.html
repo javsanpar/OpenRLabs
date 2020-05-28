@@ -146,9 +146,10 @@ function check_status_client(respuesta) {
 	}
 	
 	if (respuesta.finalizado === undefined) {		
-
+		
 		requestAJAX('{{=URL("connect", "check_pc_status")}}', parametros_status, check_status_client);
 	} else {
+		console.log('finalizado ok')
 		if (typeof(respuesta.error) === "undefined"){
 			document.getElementById("buttonConsole").style.display = 'block';
 			stop_progress_bar();			

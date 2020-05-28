@@ -10,7 +10,6 @@
 # @version 1.1.0 - First version
 # @date    2019-15-11
 #################################################################################
-import time
 
 from http_requests import HttpRequest, UsingPoolManagerConnector, NotUsingPoolManagerConnector
 from ognsys_actions import GetStatusClient, ReserveClient, RedirectEvents, RegisterSessionTimeout, UnreserveClient

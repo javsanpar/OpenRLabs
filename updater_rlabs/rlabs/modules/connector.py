@@ -16,20 +16,21 @@ from datetime import datetime, timedelta
 import time
 
 from client_lab import Client
-from ados import adoDB_active_reserves
+from ados import adoDB_active_reserves, adoDB_openRlabs_setup
 import errors
 
 
-class Connection:
-        
-    MAX_RETRIES = 21
-    WAIT_CHECK_LOOP = 10
+class Connection:            
         
     def __init__(self, my_context):
 
         self.my_context = my_context
+        
         self.client = Client(self.my_context)
-                    
+        
+        self.WAIT_CHECK_LOOP = 10
+        self.MAX_RETRIES = int((adoDB_openRlabs_setup.getSetup_OpenRLabs(my_context['db'])['seconds_to_wait'] / self.WAIT_CHECK_LOOP) - 1)
+        
      
  
         
@@ -101,13 +102,12 @@ class Connection:
         
         num_retries = int(self.my_context.num_retries)
                 
-        
-        if num_retries < Connection.MAX_RETRIES:
-            
-            time.sleep( Connection.WAIT_CHECK_LOOP )
-            
+        if num_retries < self.MAX_RETRIES:
+
+            time.sleep( self.WAIT_CHECK_LOOP )
+
             self.my_context.num_retries = str(num_retries + 1)
-            
+
             pc_status = self.client.get_status_client()            
 
             if 'status' not in pc_status: 
@@ -116,7 +116,6 @@ class Connection:
             if pc_status['status'] == 'off' or pc_status['status'] == 'oglive' \
                or pc_status['status'] == 'busy' or pc_status['status'] == 'error':
                                 
-                        
                 return {'status' : '.../',
                         'equipo_reservado' : self.my_context}
             else:

@@ -18,7 +18,7 @@ from gluon.storage import Storage
 from ognsys import Ognsys
 from lab import Lab
 from client_lab import Client
-
+from reserves import ActiveReserves
 import ou
 from  ados import adoDB_services, adoDB_active_reserves, adoDB_openRlabs_setup
 import connector
@@ -28,46 +28,15 @@ import connector
 def ous():   
        
     opengnsys = Ognsys(db)
+    active_reserves = ActiveReserves(db, auth.user_id, auth.user_groups.values())        
     
-    if 'admin' in  auth.user_groups.values():
-        active_reserves = adoDB_active_reserves.getAll(db)
-    else:
-        active_reserves = adoDB_active_reserves.get(db, auth.user_id)   
-    
-    if len(active_reserves) > 0:
-        exits_reserves = True
-    else:
-        exits_reserves = False
-        
-    # Render() for get user_name from id (See represent clause in model).
-    # return Iterator object        
-    active_reserves_iterator = active_reserves.render()
-    
-    # Build dict with info about status client.
-    active_reserves = []
-    # only oner Client whit the same PoolManager to all 
-    # client status checks 
-    client = Client(Storage())
-    for active_reserve in active_reserves_iterator:
-        
-        active_reserve_dict =  active_reserve.as_dict()
-        
-        client.update_context({'ip' : active_reserve_dict['ip'],
-                               'ou_id' : active_reserve_dict['ou_id'],
-                               'lab_id' : active_reserve_dict['lab_id'],
-                               })
-                
-        active_reserve_dict.update(client.get_status_client())
-        active_reserves.append(active_reserve_dict)
-    
-    
-    check_time = (connector.Connection.MAX_RETRIES + 1) * connector.Connection.WAIT_CHECK_LOOP
+    check_time = adoDB_openRlabs_setup.getSetup_OpenRLabs(db)['seconds_to_wait']
 
     return dict(ous=opengnsys.get_ous(), 
                 services=adoDB_services.get_services(db),
                 maxtime_reserve = adoDB_openRlabs_setup.get_maxtime_reserve(db),
-                exits_reserves = exits_reserves,
-                active_reserves=active_reserves,
+                active_reserves= active_reserves.get_reserves(),
+                exits_reserves = active_reserves.exits_reserves(),
                 check_time = check_time
                 )
 

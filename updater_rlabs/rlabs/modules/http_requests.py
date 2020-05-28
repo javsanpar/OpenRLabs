@@ -38,7 +38,7 @@ class UsingPoolManagerConnector:
     
     def __do_request(self, params):
         param_request = [params['action'], params['url']]
-        
+                
         if params['action'] == 'GET':
             timeout = self.TIMEOUT
             
@@ -72,6 +72,7 @@ class NotUsingPoolManagerConnector:
             return {'error': errors.ERROR_CONEXION}
         
     def __do_request(self, params):
+        
         if params['action'] == 'GET':
             timeout = self.TIMEOUT
         else:

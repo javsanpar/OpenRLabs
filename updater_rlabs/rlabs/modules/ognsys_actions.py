@@ -55,96 +55,94 @@ class OgnsysAction:
         
         self.body = body
         self.url_base = url_group.get_url()
-
-    def get_params(self):
-        params = {}
         
+        self.action = ""
+        self.url = ""
+        
+        self.params = {}
+ 
+    def get_params(self):
         if self.body:
-            params['body'] = self.body
+            self.params['body'] = self.body
             
-        params['action'] = self.action
-        params['url'] = self.url
-        params['headers'] = self.headers
-
-        return params
+        self.params['action'] = self.action
+        self.params['url'] = self.url
+        self.params['headers'] = self.headers
+        
+        return self.params
 
 class DoLogin(OgnsysAction): 
     def __init__(self, ou_credentials):
-        self.action = 'POST'        
-
         body = {
                   "username": ou_credentials['ou_user'],
                   "password": ou_credentials['ou_password']
                 }
         
         super().__init__(UrlLogin(), body)
+        
+        self.action = 'POST'        
         self.url = self.url_base
         
 class GetOUS(OgnsysAction):            
     def __init__(self):        
-        self.action = 'GET'        
         super().__init__(UrlGroupOus())
+        
+        self.action = 'GET'  
+        print(self.action)            
         self.url = self.url_base
 
+    
 
 class GetLabsOu(OgnsysAction):
     def __init__(self, ou_id):
-        self.ou_id = ou_id
+        super().__init__(UrlGroupLabs(ou_id))        
         
+        self.ou_id = ou_id        
         self.action = 'GET'
         
-        super().__init__(UrlGroupLabs(ou_id))
         self.url = self.url_base
 
 class GetLabClients(OgnsysAction):
     def __init__(self, ou_id, lab_id):
-        self.action = 'GET'
-        
         super().__init__(UrlGroupClients(ou_id,lab_id))
+                
+        self.action = 'GET'        
         self.url = self.url_base
     
 class GetDiskConfigClient(OgnsysAction):
     def __init__(self, ou_id, lab_id, pc_id):
-        self.action = 'GET'
-                
-        super().__init__(UrlGroupClients(ou_id,lab_id))
+        super().__init__(UrlGroupClients(ou_id,lab_id))        
         
+        self.action = 'GET'                    
         self.url = self.url_base + '/' + str(pc_id) + '/diskcfg'
         
         
     
 class ReserveClient(OgnsysAction):
-    def __init__(self, ou_id, image_id, lab_id, maxtime):
-        
-        self.action = 'POST'
-        
+    def __init__(self, ou_id, image_id, lab_id, maxtime):                
         body = {
                   "labid": lab_id,
                   "maxtime": int(maxtime)
                 }
-        
-        
-        super().__init__(UrlGroupOus(), body)                
-        
+                
+        super().__init__(UrlGroupOus(), body)
+                        
+        self.action = 'POST'
         self.url = self.url_base + "/" + str(ou_id) + "/images/"+ str(image_id) + "/reserve"
         
 class UnreserveClient(OgnsysAction):
      def __init__(self, ou_id, lab_id, pc_id):
-   
-        self.action = 'DELETE'
         
         super().__init__(UrlGroupClients(ou_id,lab_id))
         
+        self.action = 'DELETE'
         self.url = self.url_base + '/' + str(pc_id) + "/unreserve"
         
         
             
         
 class RedirectEvents(OgnsysAction):
-    def __init__(self, ou_id, lab_id, pc_id, maxtime):
-        print('redirect')
-        
-        self.action = 'POST'
+    def __init__(self, ou_id, lab_id, pc_id, maxtime):        
             
         ou_id = str(ou_id)
         lab_id = str(lab_id)
@@ -169,16 +167,13 @@ class RedirectEvents(OgnsysAction):
         
         super().__init__(UrlGroupClients(ou_id,lab_id), body)
         
+        self.action = 'POST'
         self.url = self.url_base + '/' + pc_id + "/events"
 
 
             
 class RegisterSessionTimeout(OgnsysAction):
     def __init__(self, ou_id, lab_id, pc_id, maxtime):
-        print('register timeout')
-        
-        self.action = 'POST'
-        
             
         ou_id = str(ou_id)
         lab_id = str(lab_id)
@@ -193,6 +188,7 @@ class RegisterSessionTimeout(OgnsysAction):
         
         super().__init__(UrlGroupClients(ou_id,lab_id), body)
         
+        self.action = 'POST'        
         self.url = self.url_base + '/' + pc_id + "/session"
 
 

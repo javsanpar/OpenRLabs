@@ -50,27 +50,35 @@ def do_reserve():
     
 @auth.requires_membership('enabled')      
 def check_pc_status():
-    #print('check_status')
+    print('check_status')
     if request.post_vars:
                                 
         opengnsys = Ognsys(db)
         if opengnsys.set_apikey(request.post_vars.ou_id):
             
             my_context = Storage(**request.post_vars)  
-                        
+                
+            my_context['db'] = db
+                    
             connection = Connection(my_context)  
             pc_status_info = connection.check_pc_status()
             if 'error' in pc_status_info:
                 print('unreserve')
 
-                my_context['db'] = db                
+                                
                 client = Client(my_context)
                 
                 client.unreserve_remote_pc()
                 
                 logger.log(auth.user.first_name, auth.user.last_name,
                        request.post_vars.name, request.post_vars.ip, "reserve_error")
-                                
+            
+                              
+            # Key db raise error in json.load
+            if 'equipo_reservado' in pc_status_info:
+                if 'db' in pc_status_info['equipo_reservado']:        
+                    pc_status_info['equipo_reservado']['db'] = None
+            
             return json.dumps(pc_status_info)
         else:
             return json.dumps({'error', 'Error de inicialización, compruebe configuración opengnsys'})
