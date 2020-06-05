@@ -17,8 +17,9 @@ from ognsys_actions import GetLabsOu
 from ados import adoDB_ous
 
 def get_ou_credentials(db, ou_id):    
-    return adoDB_ous.get_ou_credentials(db, ou_id)
-
+    credentials =  adoDB_ous.get_ou_credentials(db, ou_id)
+    
+    return credentials
 
 
 # ---- Return a list of LABS (dictionary) within the passed OU ---

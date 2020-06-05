@@ -11,10 +11,11 @@ function delete_labs(){
 }
 
 
-function show_Lab(lab, index){
+function show_Lab(lab, index){	
 	delete_disponibles();
 	// Buscar span id y añadir elemento 	
-	var table = document.getElementById("table_ou_" + lab.ou.id);	
+	var table = document.getElementById("table_ou_" + lab.ou.id);
+	table.setAttribute("style", "background:NONE;");
 	var new_row = table.insertRow();
 	new_row.setAttribute("id", "lab_" + lab.id);
 	new_row.setAttribute("class", "lab");
@@ -29,7 +30,7 @@ function show_Lab(lab, index){
 								"<tbody>" +
 									"<tr>" +
 										"<td>" +									
-											"<span class='labs'" +
+											"<span class='labs' " +
 												"data-ou='" + lab.ou.id + "' " +
 												"data-lab_id='" + lab.id + "' onClick='get_remotePCs(event)'>" +
 												lab.name + "</span>" +

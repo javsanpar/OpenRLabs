@@ -311,7 +311,8 @@ CREATE TABLE public."openRLabs_setup" (
     "URL_openRLabs_server" character varying(512),
     "URL_authentication_mail_pop3_server" character varying(512),
     maxtime_reserve character varying(512),
-    seconds_to_wait integer DEFAULT 200 NOT NULL
+    seconds_to_wait integer DEFAULT 200 NOT NULL,
+    "Use_TLS" boolean DEFAULT true NOT NULL
 );
 
 

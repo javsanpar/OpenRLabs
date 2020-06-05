@@ -28,8 +28,6 @@ def email_auth_pop3(server, domain, db, tls_mode= None ):
             (host, port) = server.split(':')
             (user) = ''.join(email).split('@')[0]
             
-            if int(port) == 995: 
-                tls_mode = True
             
             try:            
                 pop3 = None

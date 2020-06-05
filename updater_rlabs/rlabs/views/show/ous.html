@@ -21,6 +21,9 @@ var labs_showed = 0;
 
 function get_Labs_ON(event) {
 	labs_showed = 0;
+	
+	var table_id = "table_ou_" + event.target.getAttribute('data-ou');
+	document.getElementById(table_id).setAttribute("style", "background : #bfbfbf;");
 
 	requestAJAX('{{=URL("show", "labs")}}',
 						'ou_id=' + event.target.getAttribute('data-ou'),
