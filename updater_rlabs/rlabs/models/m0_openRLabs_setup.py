@@ -5,6 +5,7 @@ db.define_table('openRLabs_setup',
                 Field('URL_openGnsys_server', required=True),
                 Field('URL_openRLabs_server', required=True),
                 Field('URL_authentication_mail_pop3_server', required=True),
+                Field('Use_TLS', type='boolean', required=True, default=True),
                 Field('maxtime_reserve', required=True, default='2'),
                 Field('seconds_to_wait', required=True, default=200)
                 )

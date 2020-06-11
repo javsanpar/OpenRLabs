@@ -6,7 +6,7 @@ function hide_footer(){var footers=document.getElementsByClassName('footer');foo
 function show_footer(){var footers=document.getElementsByClassName('footer');footers[0].style.display='block';}
 function show_Labs(labs){delete_labs();labs.forEach(show_Lab);}
 function delete_labs(){delete_by_class('lab');}
-function show_Lab(lab,index){delete_disponibles();var table=document.getElementById("table_ou_"+lab.ou.id);var new_row=table.insertRow();new_row.setAttribute("id","lab_"+lab.id);new_row.setAttribute("class","lab");new_row.setAttribute("style","display:block;");var htmlRow="<td width='16'>"+
+function show_Lab(lab,index){delete_disponibles();var table=document.getElementById("table_ou_"+lab.ou.id);table.setAttribute("style","background:NONE;");var new_row=table.insertRow();new_row.setAttribute("id","lab_"+lab.id);new_row.setAttribute("class","lab");new_row.setAttribute("style","display:block;");var htmlRow="<td width='16'>"+
 "<img src='../static/images/aula.png' "+
 "data-ou='"+lab.ou.id+"' "+
 "data-lab_id='"+lab.id+"' onClick='get_remotePCs(event)'>"+
@@ -16,7 +16,7 @@ function show_Lab(lab,index){delete_disponibles();var table=document.getElementB
 "<tbody>"+
 "<tr>"+
 "<td>"+
-"<span class='labs'"+
+"<span class='labs' "+
 "data-ou='"+lab.ou.id+"' "+
 "data-lab_id='"+lab.id+"' onClick='get_remotePCs(event)'>"+
 lab.name+"</span>"+

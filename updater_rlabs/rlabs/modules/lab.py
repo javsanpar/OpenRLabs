@@ -98,7 +98,8 @@ class Lab:
         pcs_disponibles = 0
         PCs_info = []
         images_info = []
-        
+        #print('pcs')
+        #print(PCs)
         for pc in PCs:
             # NO porque saturamos servidor opengnsys                
             #pc_status = __getStatusClient(ou_id, lab_id, str(pc['id']))
@@ -118,9 +119,11 @@ class Lab:
                 pcs_disponibles = pcs_disponibles + 1
                 
                 pc_diskcfg = self.__get_diskconfig_client(str(pc['id']))
-
+                #print('discfg')
+                #print(pc_diskcfg)
                 for partition in pc_diskcfg['diskcfg']:
-                    
+                    #print('partition')
+                    #print(partition)
                     image__aready_added = False
                                 
                     if ("parttype" and 'image') in partition:
@@ -132,7 +135,10 @@ class Lab:
                         if image__aready_added == False:                          
                             images_info.append({'id': partition['image']['id'], 'os': partition['os'], 
                                                 'lab_id': self.lab_id, 'ou_id': self.ou_id})
-                            
+        
+        if len(images_info) == 0:
+            return {'error' : 'Error Los equipos no tienen imagen asignada en OpenGnsys.'}
+         
         if pcs_disponibles == 0:
             return {'error' : 'Error No quedan equipos disponibles'}        
         else:

@@ -30,6 +30,13 @@ def load_setup(db):
             SERVER_GUAC = line_fields[1].rstrip('\n')
         if line_fields[0] == 'SERVER_OPENGNSYS':                    
             SERVER_OPENGNSYS = line_fields[1].rstrip('\n')
+        if line_fields[0] == 'USE_TLS':                    
+            USE_TLS = line_fields[1].rstrip('\n')
+            if USE_TLS == "yes":
+                use_tls = True
+            else:
+                use_tls = False
+                
         if line_fields[0] == 'ADMIN_RLABS':                    
             ADMIN_RLABS = line_fields[1].rstrip('\n')
 
@@ -40,7 +47,8 @@ def load_setup(db):
                               URL_openGnsys_server_username = "admin",
                               URL_openGnsys_server_password = "12345678",                              
                               URL_openRLabs_server = "https://" + SERVER_RLABS,
-                              URL_authentication_mail_pop3_server = POP3_SERVER + ":" + PORT_POP3_SERVER)
+                              URL_authentication_mail_pop3_server = POP3_SERVER + ":" + PORT_POP3_SERVER,
+                              Use_TLS = use_tls)
     
     enabled_rows = db(db.auth_group.role == 'enabled').select()
     if enabled_rows and len(enabled_rows) > 0:
