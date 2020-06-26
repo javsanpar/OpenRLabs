@@ -42,7 +42,7 @@ def load_setup(db):
 
             
              
-    db.openRLabs_setup.insert(URL_Apache_Guacamole_WebSocket = "wss://" + SERVER_GUAC + ":" + PORT_WSS + "/websocket-1.1.24/tunnel-websocket",
+    db.openRLabs_setup.insert(URL_Apache_Guacamole_WebSocket = "wss://" + SERVER_GUAC + ":" + PORT_WSS + "/websocket-1.1.25/tunnel-websocket",
                               URL_openGnsys_server = "https://" + SERVER_OPENGNSYS + "/opengnsys/rest",
                               URL_openGnsys_server_username = "admin",
                               URL_openGnsys_server_password = "12345678",                              

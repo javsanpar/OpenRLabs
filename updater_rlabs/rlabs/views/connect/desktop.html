@@ -68,8 +68,15 @@
 	            var connect_string =
 	                window.location.search.substring(1)
 	                + "&width="  + optimal_width
-	                + "&height=" + optimal_height;	   	
-		    	
+	                + "&height=" + optimal_height;
+	            
+	            // Add audio mimetypes to connect_string
+	
+	            Guacamole.AudioPlayer.getSupportedTypes().forEach(function (mimetype) {
+	
+	            	connect_string += "&audio=" + encodeURIComponent(mimetype);	
+	            });
+						    	
 	        	// Connect
 	        	
 	        	connect_string += "&protocol={{=protocol}}&ip={{=ip}}&port={{=port}}&username={{=username}}";
