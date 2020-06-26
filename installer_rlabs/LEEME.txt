@@ -1,4 +1,4 @@
-OpenRLabs v1.1.1 - 30 Marzo 2020 - Copyright 2020 David Fuertes.
+OpenRLabs v1.1.1 - 24-06- 2020 - Copyright 2020 David Fuertes.
 
 
 INTRODUCCIÓN
