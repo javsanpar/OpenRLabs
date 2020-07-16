@@ -29,7 +29,7 @@ echo "+------------------------------------------+"
 
 tar xzf packages/nginx_config.tar.gz -C packages/
 
-w2pdir=$(cat tmp/w2p_dir.tmp)
+w2pdir=$(cat /tmp/w2p_dir.tmp)
 
 
 echo "SERVER_RLABS=$server_rlabs" >> $w2pdir/setup_init.cfg

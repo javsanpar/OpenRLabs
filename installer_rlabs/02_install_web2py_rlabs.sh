@@ -33,7 +33,7 @@ if [ "$admin_rlabs" = "" ]; then
 fi
 
 
-echo $w2p_dir > tmp/w2p_dir.tmp 
+echo $w2p_dir > /tmp/w2p_dir.tmp
 
 echo "+------------------------------------------+"
 echo "|                                          |"
